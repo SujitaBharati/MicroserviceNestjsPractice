@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package messaging;
+
+
+message Message {
+    string message_id = 1;
+    string conversation_id = 2;
+    string content = 3;
+    string user_id = 4;
+}
+
+
+message Conversation {
+    string conversation_id = 1;
+    repeated Message messages = 2;
+    repeated string user_ids = 3;
+}
+
+message User {
+    string user_id = 1;
+    string name = 2;
+    repeated string conversations_ids = 3;
+}
+
+message Empty {}
+
+
+message CreateConversationRequest {
+    repeated string user_ids = 1;
+}
+
+message Conversations {
+    repeated Conversation conversations = 1;
+}
+
+message Users {
+    repeated User users = 1;
+}
+
+message CreateConversationResponse {
+    Conversation conversation = 1;
+}
+
+message QueryMessagesRequest {
+    string conversation_id = 1;
+}
+
+service MessagingService {
+    rpc SendMessage(Message) returns (Empty) {}
+    rpc QueryMessages(QueryMessagesRequest) returns (stream Message) {}
+    rpc CreateUser(User) returns (User) {}
+    rpc CreateConversation(CreateConversationRequest) returns (Conversation) {}
+    rpc GetConversation(Empty) returns (Conversations);
+    rpc GetUsers(Empty) returns (Users);
+}
